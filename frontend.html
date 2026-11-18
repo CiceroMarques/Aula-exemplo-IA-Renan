@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lista de tarefas</title>
+    <style>
+      body {
+        max-width: 640px;
+        margin: 3rem auto;
+        padding: 0 1rem;
+        font-family: system-ui, sans-serif;
+      }
+
+      li {
+        margin: 0.75rem 0;
+      }
+
+      .concluida {
+        color: #477547;
+      }
+
+      #mensagem {
+        color: #a12622;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Lista de tarefas</h1>
+    <p id="mensagem" role="status">Carregando tarefas...</p>
+    <ul id="lista-tarefas"></ul>
+
+    <script>
+      async function carregarTarefas() {
+        const mensagem = document.querySelector("#mensagem");
+        const lista = document.querySelector("#lista-tarefas");
+
+        try {
+          const resposta = await fetch("/api/tarefas");
+          if (!resposta.ok) {
+            throw new Error(`A API respondeu com status ${resposta.status}`);
+          }
+
+          const tarefas = await resposta.json();
+          lista.replaceChildren(
+            ...tarefas.map((tarefa) => {
+              const item = document.createElement("li");
+              item.textContent = `${tarefa.concluida ? "✓" : "○"} ${tarefa.titulo}`;
+              if (tarefa.concluida) {
+                item.classList.add("concluida");
+              }
+              return item;
+            })
+          );
+          mensagem.textContent = `${tarefas.length} tarefas carregadas da API.`;
+          mensagem.style.color = "#477547";
+        } catch (erro) {
+          console.error("Erro ao consultar a API:", erro);
+          mensagem.textContent = "Não foi possível carregar as tarefas. Verifique se o servidor está ativo.";
+        }
+      }
+
+      carregarTarefas();
+    </script>
+  </body>
+</html>
