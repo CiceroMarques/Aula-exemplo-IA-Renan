@@ -1,0 +1,15 @@
+{
+  "name": "lista-de-estudos-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch index.js",
+    "start": "node index.js",
+    "test": "node --test src/test/backend.test.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
