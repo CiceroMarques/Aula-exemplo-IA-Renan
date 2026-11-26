@@ -30,5 +30,5 @@ use the editor.
 <!-- LOVABLE:END -->
 
 ## Application architecture
-- Keep API communication in `src/lib/tasks-api.ts`; the backend owns the in-memory task data, and pure task transformations remain browser-safe.
+- Keep API communication in `src/lib/tasks-api.ts`; the backend owns the in-memory task data, and pure task transformations remain browser-safe. The backend resets sample data when restarted.
 - Use reusable task rows and the existing UI primitives; this keeps inline editing and accessible confirmation consistent on the single page.

@@ -1,4 +1,4 @@
-import type { Task } from "./tasks";
+import type { Task, TaskStatus } from "./tasks";
 
 function isTask(value: unknown): value is Task {
   return (
@@ -6,8 +6,14 @@ function isTask(value: unknown): value is Task {
     value !== null &&
     "id" in value &&
     typeof value.id === "string" &&
+    "title" in value &&
+    typeof value.title === "string" &&
     "description" in value &&
     typeof value.description === "string" &&
+    "status" in value &&
+    (value.status === "pending" ||
+      value.status === "in-progress" ||
+      value.status === "completed") &&
     "completed" in value &&
     typeof value.completed === "boolean"
   );
@@ -46,11 +52,15 @@ export async function fetchTasks(): Promise<Task[]> {
   return payload;
 }
 
-export async function createTask(description: string): Promise<Task> {
+export async function createTask(
+  title: string,
+  description: string,
+  status: TaskStatus,
+): Promise<Task> {
   const payload = await request("/api/tarefas", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ description }),
+    body: JSON.stringify({ title, description, status }),
   });
   if (!isTask(payload)) throw new Error("A API retornou uma tarefa inválida.");
   return payload;
@@ -58,7 +68,7 @@ export async function createTask(description: string): Promise<Task> {
 
 export async function updateTask(
   id: string,
-  changes: Partial<Pick<Task, "description" | "completed">>,
+  changes: Partial<Pick<Task, "title" | "description" | "status">>,
 ): Promise<Task> {
   const payload = await request(`/api/tarefas/${encodeURIComponent(id)}`, {
     method: "PATCH",
